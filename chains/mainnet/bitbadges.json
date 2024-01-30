@@ -4,13 +4,13 @@
   "api": [
     {
       "provider": "bitbadges",
-      "address": "http://node.bitbadges.io:1317"
+      "address": "https://node.bitbadges.io/api"
     }
   ],
   "rpc": [
     {
       "provider": "bitbadges",
-      "address": "http://node.bitbadges.io:26657"
+      "address": "https://node.bitbadges.io/rpc"
     }
   ],
   "sdk_version": "0.47.5",
