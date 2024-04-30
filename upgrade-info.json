@@ -1,0 +1,5 @@
+{
+    "binaries": {
+        "linux/amd64": "https://github.com/BitBadges/bitbadgeschain/releases/download/v1.0/bitbadgeschain-linux-amd64?checksum=sha256:64136ffdde3e33d530a02b4cef25f4112650751803b2889738f8728c740e72b1"
+    }
+}
