@@ -13,16 +13,16 @@
       "address": "https://node.bitbadges.io/rpc"
     }
   ],
-  "sdk_version": "0.47.5",
+  "sdk_version": "0.47.11",
   "coin_type": "118",
   "min_tx_fee": "0",
   "addr_prefix": "cosmos",
   "logo": "/bitbadgeslogo.png",
   "assets": [
     {
-      "base": "badge",
+      "base": "ubadge",
       "symbol": "BADGE",
-      "exponent": "0",
+      "exponent": "9",
       "logo": "/bitbadgeslogo.png"
     }
   ]
