@@ -1,16 +1,16 @@
 {
-  "chain_name": "BitBadges Mainnet",
-  "registry_name": "BitBadges Mainnet",
+  "chain_name": "BitBadges Testnet",
+  "registry_name": "BitBadges Testnet",
   "api": [
     {
       "provider": "bitbadges",
-      "address": "https://node.bitbadges.io/api"
+      "address": "http://138.197.10.8:1317"
     }
   ],
   "rpc": [
     {
       "provider": "bitbadges",
-      "address": "https://node.bitbadges.io/rpc"
+      "address": "http://138.197.10.8:26657"
     }
   ],
   "sdk_version": "0.50.8",
