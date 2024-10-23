@@ -13,10 +13,10 @@
       "address": "https://testnet.node.bitbadges.io/rpc"
     }
   ],
-  "sdk_version": "0.50.8",
+  "sdk_version": "0.50.10",
   "coin_type": "118",
   "min_tx_fee": "0",
-  "addr_prefix": "cosmos",
+  "addr_prefix": "bb",
   "logo": "/bitbadgeslogo.png",
   "assets": [
     {
