@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
 import { useBlockchain } from './useBlockchain';
 
-
-export const useMintStore = defineStore('mintStore', {
+export const useAuthStore = defineStore('authStore', {
   state: () => {
     return {
-      inflation: '0',
+      addressCount: 0,
     };
   },
   getters: {
@@ -15,15 +14,14 @@ export const useMintStore = defineStore('mintStore', {
   },
   actions: {
     initial() {
-      this.fetchInflation();
+      this.fetchAddresses();
     },
-    async fetchInflation() {
+    async fetchAddresses() {
       try {
-        const res = await this.blockchain?.rpc?.getMintInflation().catch(() => {
-          this.inflation = '0';
-        });
+        const res = await this.blockchain?.rpc?.getAuthAccounts();
+        console.log(res);
         if (res) {
-          this.inflation = res.inflation;
+          this.addressCount = Number(res.pagination.total) || 0;
         }
       } catch (e) {
         console.log(e);

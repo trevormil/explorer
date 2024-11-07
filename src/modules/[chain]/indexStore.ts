@@ -6,6 +6,7 @@ import {
   useFormatter,
   useGovStore,
 } from '@/stores';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useDistributionStore } from '@/stores/useDistributionStore';
 import { useMintStore } from '@/stores/useMintStore';
 import { useStakingStore } from '@/stores/useStakingStore';
@@ -87,33 +88,33 @@ export const useIndexModule = defineStore('module-index', {
       return useBankStore();
     },
     twitter(): string {
-      if(!this.coinInfo?.links?.twitter_screen_name) return ""
+      if (!this.coinInfo?.links?.twitter_screen_name) return '';
       return `https://twitter.com/${this.coinInfo?.links.twitter_screen_name}`;
     },
     homepage(): string {
-      if(!this.coinInfo?.links?.homepage) return ""
+      if (!this.coinInfo?.links?.homepage) return '';
       const [page1, page2, page3] = this.coinInfo?.links?.homepage;
       return page1 || page2 || page3;
     },
     github(): string {
-      if(!this.coinInfo?.links?.repos_url) return ""
+      if (!this.coinInfo?.links?.repos_url) return '';
       const [page1, page2, page3] = this.coinInfo?.links?.repos_url?.github;
       return page1 || page2 || page3;
     },
     telegram(): string {
-      if(!this.coinInfo?.links?.homepage) return ""
+      if (!this.coinInfo?.links?.homepage) return '';
       return `https://t.me/${this.coinInfo?.links.telegram_channel_identifier}`;
     },
 
     priceChange(): string {
-      if(!this.coinInfo?.market_data?.price_change_percentage_24h) return ""
+      if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
       const change =
         this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       return numeral(change).format('+0.[00]');
     },
 
     priceColor(): string {
-      if(!this.coinInfo?.market_data?.price_change_percentage_24h) return ""
+      if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
       const change =
         this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       switch (true) {
@@ -126,7 +127,7 @@ export const useIndexModule = defineStore('module-index', {
       }
     },
     trustColor(): string {
-      if(!this.coinInfo?.tickers) return ""
+      if (!this.coinInfo?.tickers) return '';
       const change = this.coinInfo?.tickers[this.tickerIndex]?.trust_score;
       return change;
     },
@@ -137,8 +138,8 @@ export const useIndexModule = defineStore('module-index', {
     },
 
     proposals() {
-      const gov = useGovStore()
-      return gov.proposals['2']
+      const gov = useGovStore();
+      return gov.proposals['2'];
     },
 
     stats() {
@@ -147,6 +148,7 @@ export const useIndexModule = defineStore('module-index', {
       const staking = useStakingStore();
       const mintStore = useMintStore();
       const formatter = useFormatter();
+      const auth = useAuthStore();
 
       return [
         {
@@ -160,7 +162,16 @@ export const useIndexModule = defineStore('module-index', {
           title: 'Validators',
           color: 'error',
           icon: 'mdi-human-queue',
-          stats: String(base?.latest?.block?.last_commit?.signatures.length || 0),
+          stats: String(
+            base?.latest?.block?.last_commit?.signatures.length || 0
+          ),
+          change: 0,
+        },
+        {
+          title: 'Addresses',
+          color: 'warning',
+          icon: 'mdi-human-queue',
+          stats: String(auth.addressCount),
           change: 0,
         },
         {
@@ -181,13 +192,13 @@ export const useIndexModule = defineStore('module-index', {
           }),
           change: 0,
         },
-        {
-          title: 'Inflation',
-          color: 'success',
-          icon: 'mdi-chart-multiple',
-          stats: formatter.formatDecimalToPercent(mintStore.inflation),
-          change: 0,
-        },
+        // {
+        //   title: 'Inflation',
+        //   color: 'success',
+        //   icon: 'mdi-chart-multiple',
+        //   stats: formatter.formatDecimalToPercent(mintStore.inflation),
+        //   change: 0,
+        // },
         {
           title: 'Community Pool',
           color: 'primary',
@@ -207,8 +218,8 @@ export const useIndexModule = defineStore('module-index', {
       this.tickerIndex = 0;
       // @ts-ignore
       const [firstAsset] = this.blockchain?.assets || [];
-      return firstAsset.coingecko_id
-    }
+      return firstAsset.coingecko_id;
+    },
   },
   actions: {
     async loadDashboard() {
@@ -225,6 +236,7 @@ export const useIndexModule = defineStore('module-index', {
               denom: t.denom,
             }));
         });
+      useAuthStore().fetchAddresses();
       // const gov = useGovStore();
       // gov.fetchProposals('2').then((x) => {
       //   this.proposals = x;
