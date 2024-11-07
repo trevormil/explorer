@@ -5,6 +5,7 @@ import {
   useBankStore,
   useFormatter,
   useGovStore,
+  useBadgeBankStore,
 } from '@/stores';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useDistributionStore } from '@/stores/useDistributionStore';
@@ -87,6 +88,9 @@ export const useIndexModule = defineStore('module-index', {
     bankStore() {
       return useBankStore();
     },
+    badgeBankStore() {
+      return useBadgeBankStore();
+    },
     twitter(): string {
       if (!this.coinInfo?.links?.twitter_screen_name) return '';
       return `https://twitter.com/${this.coinInfo?.links.twitter_screen_name}`;
@@ -145,6 +149,7 @@ export const useIndexModule = defineStore('module-index', {
     stats() {
       const base = useBaseStore();
       const bank = useBankStore();
+      const badgeBank = useBadgeBankStore();
       const staking = useStakingStore();
       const mintStore = useMintStore();
       const formatter = useFormatter();
@@ -160,7 +165,7 @@ export const useIndexModule = defineStore('module-index', {
         },
         {
           title: 'Validators',
-          color: 'error',
+          color: 'warning',
           icon: 'mdi-human-queue',
           stats: String(
             base?.latest?.block?.last_commit?.signatures.length || 0
@@ -169,21 +174,28 @@ export const useIndexModule = defineStore('module-index', {
         },
         {
           title: 'Addresses',
-          color: 'warning',
+          color: 'primary',
           icon: 'mdi-human-queue',
           stats: String(auth.addressCount),
           change: 0,
         },
         {
-          title: 'Supply',
+          title: 'Supply ($BADGE)',
           color: 'success',
+          icon: 'mdi-currency-usd',
+          stats: formatter.formatTokenAmount(badgeBank.supply),
+          change: 0,
+        },
+        {
+          title: 'Supply ($STAKE)',
+          color: 'warning',
           icon: 'mdi-currency-usd',
           stats: formatter.formatTokenAmount(bank.supply),
           change: 0,
         },
         {
-          title: 'Bonded Tokens',
-          color: 'warning',
+          title: 'Bonded Tokens ($STAKE)',
+          color: 'primary',
           icon: 'mdi-lock',
           stats: formatter.formatTokenAmount({
             // @ts-ignore
@@ -192,25 +204,32 @@ export const useIndexModule = defineStore('module-index', {
           }),
           change: 0,
         },
-        // {
-        //   title: 'Inflation',
-        //   color: 'success',
-        //   icon: 'mdi-chart-multiple',
-        //   stats: formatter.formatDecimalToPercent(mintStore.inflation),
-        //   change: 0,
-        // },
         {
-          title: 'Community Pool',
-          color: 'primary',
-          icon: 'mdi-bank',
-          stats: formatter.formatTokens(
-            // @ts-ignore
-            this.communityPool?.filter(
-              (x: Coin) => x.denom === staking.params.bond_denom
-            )
-          ),
+          title: 'Inflation ($STAKE)',
+          color: 'success',
+          icon: 'mdi-chart-multiple',
+          stats: formatter.formatDecimalToPercent(mintStore.inflation),
           change: 0,
         },
+        {
+          title: 'Inflation ($BADGE)',
+          color: 'primary',
+          icon: 'mdi-chart-multiple',
+          stats: '0%',
+          change: 0,
+        },
+        // {
+        //   title: 'Community Pool',
+        //   color: 'primary',
+        //   icon: 'mdi-bank',
+        //   stats: formatter.formatTokens(
+        //     // @ts-ignore
+        //     this.communityPool?.filter(
+        //       (x: Coin) => x.denom === staking.params.bond_denom
+        //     )
+        //   ),
+        //   change: 0,
+        // },
       ];
     },
 

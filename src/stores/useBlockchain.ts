@@ -14,6 +14,7 @@ import type {
 import { useRouter } from 'vue-router';
 import { CosmosRestClient } from '@/libs/client';
 import {
+  useBadgeBankStore,
   useBankStore,
   useBaseStore,
   useGovStore,
@@ -147,6 +148,7 @@ export const useBlockchain = defineStore('blockchain', {
       useWalletStore().$reset();
       await useStakingStore().init();
       useBankStore().initial();
+      useBadgeBankStore().initial();
       useBaseStore().initial();
       useGovStore().initial();
       useMintStore().initial();
