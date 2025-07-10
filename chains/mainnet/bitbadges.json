@@ -24,12 +24,6 @@
       "symbol": "BADGE",
       "exponent": "9",
       "logo": "/bitbadgeslogo.png"
-    },
-    {
-      "base": "ustake",
-      "symbol": "STAKE",
-      "exponent": "9",
-      "logo": "/bitbadgeslogo.png"
     }
   ]
 }
