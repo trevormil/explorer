@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bitbadges-explorer
-          image: bitbadges-explorer:latest
+          image: trevormil23/bitbadges-explorer:latest
           ports:
             - containerPort: 5173
           envFrom:
