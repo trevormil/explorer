@@ -6,20 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:80'
+      - '5173:5173'
     container_name: bitbadges-explorer
     restart: unless-stopped
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'wget',
-          '--quiet',
-          '--tries=1',
-          '--spider',
-          'http://localhost/health',
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
