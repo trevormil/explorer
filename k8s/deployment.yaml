@@ -16,14 +16,12 @@ spec:
     spec:
       containers:
         - name: bitbadges-explorer
-          image: trevormil23/bitbadges-explorer:latest
+          image: bitbadges-explorer:latest
           ports:
-            - containerPort: 3000
-          env:
-            - name: NODE_ENV
-              value: production
-            - name: PRODUCTION
-              value: 'true'
+            - containerPort: 5173
+          envFrom:
+            - configMapRef:
+                name: bitbadges-explorer-config
           resources:
             requests:
               cpu: 50m
@@ -31,3 +29,15 @@ spec:
             limits:
               cpu: 2000m
               memory: 2000Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5173
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5173
+            initialDelaySeconds: 5
+            periodSeconds: 5

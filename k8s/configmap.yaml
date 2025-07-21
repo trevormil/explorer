@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bitbadges-explorer-config
+data:
+  NODE_ENV: 'development'
+  HOST: '0.0.0.0'
+  PORT: '5173'
