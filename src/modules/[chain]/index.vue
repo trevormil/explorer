@@ -3,16 +3,9 @@ import MdEditor from 'md-editor-v3';
 import PriceMarketChart from '@/components/charts/PriceMarketChart.vue';
 
 import { Icon } from '@iconify/vue';
-import {
-  useBlockchain,
-  useFormatter,
-  useTxDialog,
-  useWalletStore,
-  useStakingStore,
-  useParamStore,
-} from '@/stores';
+import { useBlockchain, useFormatter, useTxDialog, useWalletStore, useStakingStore, useParamStore } from '@/stores';
 import { onMounted, ref } from 'vue';
-import { useIndexModule, colorMap } from './indexStore';
+import { useIndexModule, colorMap, tickerUrl } from './indexStore';
 import { computed } from '@vue/reactivity';
 
 import CardStatisticsVertical from '@/components/CardStatisticsVertical.vue';
@@ -51,34 +44,33 @@ blockchain.$subscribe((m, s) => {
   }
 });
 function shortName(name: string, id: string) {
-  return name.toLowerCase().startsWith('ibc/') ||
-    name.toLowerCase().startsWith('0x')
-    ? id
-    : name;
+  return name.toLowerCase().startsWith('ibc/') || name.toLowerCase().startsWith('0x') ? id : name;
 }
 
-const comLinks = [
-  {
-    name: 'Website',
-    icon: 'mdi-web',
-    href: store.homepage,
-  },
-  {
-    name: 'Twitter',
-    icon: 'mdi-twitter',
-    href: store.twitter,
-  },
-  {
-    name: 'Telegram',
-    icon: 'mdi-telegram',
-    href: store.telegram,
-  },
-  {
-    name: 'Github',
-    icon: 'mdi-github',
-    href: store.github,
-  },
-];
+const comLinks = computed(() => {
+  return [
+    {
+      name: 'Website',
+      icon: 'mdi-web',
+      href: store.homepage,
+    },
+    {
+      name: 'Twitter',
+      icon: 'mdi-twitter',
+      href: store.twitter,
+    },
+    {
+      name: 'Telegram',
+      icon: 'mdi-telegram',
+      href: store.telegram,
+    },
+    {
+      name: 'Github',
+      icon: 'mdi-github',
+      href: store.github,
+    },
+  ];
+});
 
 // wallet box
 const change = computed(() => {
@@ -125,23 +117,16 @@ const amount = computed({
 
 <template>
   <div>
-    <div
-      v-if="coinInfo && coinInfo.name"
-      class="bg-base-100 rounded shadow mb-4"
-    >
+    <div v-if="coinInfo && coinInfo.name" class="bg-base-100 rounded shadow">
       <div class="grid grid-cols-2 md:grid-cols-3 p-4">
         <div class="col-span-2 md:col-span-1">
           <div class="text-xl font-semibold text-main">
-            {{ coinInfo.name }} (<span class="uppercase">{{
-              coinInfo.symbol
-            }}</span
+            {{ coinInfo.name }} (<span class="uppercase">{{ coinInfo.symbol }}</span
             >)
           </div>
           <div class="text-xs mt-2">
             {{ $t('index.rank') }}:
-            <div
-              class="badge text-xs badge-error bg-[#fcebea] dark:bg-[#41384d] text-red-400"
-            >
+            <div class="badge text-xs badge-error bg-[#fcebea] dark:bg-[#41384d] text-red-400">
               #{{ coinInfo.market_cap_rank }}
             </div>
           </div>
@@ -165,9 +150,7 @@ const amount = computed({
                   class="bg-gray-100 dark:bg-[#384059] flex items-center justify-between px-4 py-2 cursor-pointer rounded"
                 >
                   <div>
-                    <div
-                      class="font-semibold text-xl text-[#666] dark:text-white"
-                    >
+                    <div class="font-semibold text-xl text-[#666] dark:text-white">
                       {{ ticker?.market?.name || '' }}
                     </div>
                     <div class="text-info text-sm">
@@ -178,33 +161,20 @@ const amount = computed({
                   </div>
 
                   <div class="text-right">
-                    <div
-                      class="text-xl font-semibold text-[#666] dark:text-white"
-                    >
+                    <div class="text-xl font-semibold text-[#666] dark:text-white">
                       ${{ ticker?.converted_last?.usd }}
                     </div>
-                    <div class="text-sm" :class="store.priceColor">
-                      {{ store.priceChange }}%
-                    </div>
+                    <div class="text-sm" :class="store.priceColor">{{ store.priceChange }}%</div>
                   </div>
                 </div>
               </label>
               <div class="dropdown-content pt-1">
                 <div class="h-64 overflow-auto w-full shadow rounded">
                   <ul class="menu w-full bg-gray-100 rounded dark:bg-[#384059]">
-                    <li
-                      v-for="(item, index) in store.coinInfo.tickers"
-                      :key="index"
-                      @click="store.selectTicker(index)"
-                    >
-                      <div
-                        class="flex items-center justify-between hover:bg-base-100"
-                      >
+                    <li v-for="(item, index) in store.coinInfo.tickers" :key="index" @click="store.selectTicker(index)">
+                      <div class="flex items-center justify-between hover:bg-base-100">
                         <div class="flex-1">
-                          <div
-                            class="text-main text-sm"
-                            :class="trustColor(item.trust_score)"
-                          >
+                          <div class="text-main text-sm" :class="trustColor(item.trust_score)">
                             {{ item?.market?.name }}
                           </div>
                           <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -214,9 +184,7 @@ const amount = computed({
                           </div>
                         </div>
 
-                        <div class="text-base text-main">
-                          ${{ item?.converted_last?.usd }}
-                        </div>
+                        <div class="text-base text-main">${{ item?.converted_last?.usd }}</div>
                       </div>
                     </li>
                   </ul>
@@ -237,11 +205,7 @@ const amount = computed({
                   stroke-linejoin="round"
                 >
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g
-                    id="SVGRepo_tracerCarrier"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                   <g id="SVGRepo_iconCarrier">
                     <rect x="4" y="2" width="16" height="20" rx="2"></rect>
                     <line x1="8" x2="16" y1="6" y2="6"></line>
@@ -264,9 +228,7 @@ const amount = computed({
                     {{ $t('index.price_calculator') }}
                   </h3>
                   <div class="flex flex-col w-full mt-5">
-                    <div
-                      class="grid h-20 flex-grow card rounded-box place-items-center"
-                    >
+                    <div class="grid h-20 flex-grow card rounded-box place-items-center">
                       <div class="join w-full">
                         <label class="join-item btn">
                           <span class="uppercase">{{ coinInfo.symbol }}</span>
@@ -281,9 +243,7 @@ const amount = computed({
                       </div>
                     </div>
                     <div class="divider">=</div>
-                    <div
-                      class="grid h-20 flex-grow card rounded-box place-items-center"
-                    >
+                    <div class="grid h-20 flex-grow card rounded-box place-items-center">
                       <div class="join w-full">
                         <label class="join-item btn">
                           <span>USD</span>
@@ -299,17 +259,12 @@ const amount = computed({
                     </div>
                   </div>
                 </div>
-                <label class="modal-backdrop" for="calculator">{{
-                  $t('index.close')
-                }}</label>
+                <label class="modal-backdrop" for="calculator">{{ $t('index.close') }}</label>
               </div>
               <a
                 class="my-5 !text-white btn grow"
-                :class="{
-                  '!btn-success': store.trustColor === 'green',
-                  '!btn-warning': store.trustColor === 'yellow',
-                }"
-                :href="ticker.trade_url"
+                :class="{ '!btn-success': store.trustColor === 'green', '!btn-warning': store.trustColor === 'yellow' }"
+                :href="tickerUrl(ticker.trade_url)"
                 target="_blank"
               >
                 {{ $t('index.buy') }} {{ coinInfo.symbol || '' }}
@@ -324,10 +279,7 @@ const amount = computed({
       </div>
       <div class="h-[1px] w-full bg-gray-100 dark:bg-[#384059]"></div>
       <div class="max-h-[250px] overflow-auto p-4 text-sm">
-        <MdEditor
-          :model-value="coinInfo.description?.en"
-          previewOnly
-        ></MdEditor>
+        <MdEditor :model-value="coinInfo.description?.en" previewOnly></MdEditor>
       </div>
       <div class="mx-4 flex flex-wrap items-center">
         <div
@@ -339,37 +291,27 @@ const amount = computed({
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 md:!grid-cols-4 lg:!grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 md:!grid-cols-3 lg:!grid-cols-4 mt-4">
       <div v-for="(item, key) in store.stats" :key="key">
         <CardStatisticsVertical v-bind="item" />
       </div>
     </div>
 
-    <div
-      v-if="blockchain.supportModule('governance')"
-      class="bg-base-100 rounded mt-4 shadow"
-    >
+    <div v-if="blockchain.supportModule('governance')" class="bg-base-100 rounded mt-4 shadow">
       <div class="px-4 pt-4 pb-2 text-lg font-semibold text-main">
         {{ $t('index.active_proposals') }}
       </div>
       <div class="px-4 pb-4">
         <ProposalListItem :proposals="store?.proposals" />
       </div>
-      <div
-        class="pb-8 text-center"
-        v-if="store.proposals?.proposals?.length === 0"
-      >
+      <div class="pb-8 text-center" v-if="store.proposals?.proposals?.length === 0">
         {{ $t('index.no_active_proposals') }}
       </div>
     </div>
 
     <div class="bg-base-100 rounded mt-4 shadow">
-      <div
-        class="flex justify-between px-4 pt-4 pb-2 text-lg font-semibold text-main"
-      >
-        <span class="truncate">{{
-          walletStore.currentAddress || 'Not Connected'
-        }}</span>
+      <div class="flex justify-between px-4 pt-4 pb-2 text-lg font-semibold text-main">
+        <span class="truncate">{{ walletStore.currentAddress || 'Not Connected' }}</span>
         <RouterLink
           v-if="walletStore.currentAddress"
           class="float-right text-sm cursor-pointert link link-primary no-underline font-medium"
@@ -377,51 +319,38 @@ const amount = computed({
           >{{ $t('index.more') }}</RouterLink
         >
       </div>
-      <div
-        class="grid grid-cols-1 md:!grid-cols-4 auto-cols-auto gap-4 px-4 pb-6"
-      >
+      <div class="grid grid-cols-1 md:!grid-cols-4 auto-cols-auto gap-4 px-4 pb-6">
         <div class="bg-gray-100 dark:bg-[#373f59] rounded-sm px-4 py-3">
           <div class="text-sm mb-1">{{ $t('account.balance') }}</div>
           <div class="text-lg font-semibold text-main">
             {{ format.formatToken(walletStore.balanceOfStakingToken) }}
           </div>
-          <div class="text-sm" :class="color">
-            ${{ format.tokenValue(walletStore.balanceOfStakingToken) }}
-          </div>
+          <div class="text-sm" :class="color">${{ format.tokenValue(walletStore.balanceOfStakingToken) }}</div>
         </div>
         <div class="bg-gray-100 dark:bg-[#373f59] rounded-sm px-4 py-3">
           <div class="text-sm mb-1">{{ $t('module.staking') }}</div>
           <div class="text-lg font-semibold text-main">
             {{ format.formatToken(walletStore.stakingAmount) }}
           </div>
-          <div class="text-sm" :class="color">
-            ${{ format.tokenValue(walletStore.stakingAmount) }}
-          </div>
+          <div class="text-sm" :class="color">${{ format.tokenValue(walletStore.stakingAmount) }}</div>
         </div>
         <div class="bg-gray-100 dark:bg-[#373f59] rounded-sm px-4 py-3">
           <div class="text-sm mb-1">{{ $t('index.reward') }}</div>
           <div class="text-lg font-semibold text-main">
             {{ format.formatToken(walletStore.rewardAmount) }}
           </div>
-          <div class="text-sm" :class="color">
-            ${{ format.tokenValue(walletStore.rewardAmount) }}
-          </div>
+          <div class="text-sm" :class="color">${{ format.tokenValue(walletStore.rewardAmount) }}</div>
         </div>
         <div class="bg-gray-100 dark:bg-[#373f59] rounded-sm px-4 py-3">
           <div class="text-sm mb-1">{{ $t('index.unbonding') }}</div>
           <div class="text-lg font-semibold text-main">
             {{ format.formatToken(walletStore.unbondingAmount) }}
           </div>
-          <div class="text-sm" :class="color">
-            ${{ format.tokenValue(walletStore.unbondingAmount) }}
-          </div>
+          <div class="text-sm" :class="color">${{ format.tokenValue(walletStore.unbondingAmount) }}</div>
         </div>
       </div>
 
-      <div
-        v-if="walletStore.delegations.length > 0"
-        class="px-4 pb-4 overflow-auto"
-      >
+      <div v-if="walletStore.delegations.length > 0" class="px-4 pb-4 overflow-auto">
         <table class="table table-compact w-full table-zebra">
           <thead>
             <tr>
@@ -438,11 +367,7 @@ const amount = computed({
                   class="link link-primary no-underline"
                   :to="`/${chain}/staking/${item?.delegation?.validator_address}`"
                 >
-                  {{
-                    format.validatorFromBech32(
-                      item?.delegation?.validator_address
-                    )
-                  }}
+                  {{ format.validatorFromBech32(item?.delegation?.validator_address) }}
                 </RouterLink>
               </td>
               <td>{{ format.formatToken(item?.balance) }}</td>
@@ -450,9 +375,7 @@ const amount = computed({
                 {{
                   format.formatTokens(
                     walletStore?.rewards?.rewards?.find(
-                      (el) =>
-                        el?.validator_address ===
-                        item?.delegation?.validator_address
+                      (el) => el?.validator_address === item?.delegation?.validator_address
                     )?.reward
                   )
                 }}
@@ -463,13 +386,7 @@ const amount = computed({
                     for="delegate"
                     class="btn !btn-xs !btn-primary btn-ghost rounded-sm mr-2"
                     @click="
-                      dialog.open(
-                        'delegate',
-                        {
-                          validator_address: item.delegation.validator_address,
-                        },
-                        updateState
-                      )
+                      dialog.open('delegate', { validator_address: item.delegation.validator_address }, updateState)
                     "
                   >
                     {{ $t('account.btn_delegate') }}
@@ -478,13 +395,7 @@ const amount = computed({
                     for="withdraw"
                     class="btn !btn-xs !btn-primary btn-ghost rounded-sm"
                     @click="
-                      dialog.open(
-                        'withdraw',
-                        {
-                          validator_address: item.delegation.validator_address,
-                        },
-                        updateState
-                      )
+                      dialog.open('withdraw', { validator_address: item.delegation.validator_address }, updateState)
                     "
                   >
                     {{ $t('index.btn_withdraw_reward') }}
@@ -497,26 +408,19 @@ const amount = computed({
       </div>
 
       <div class="grid grid-cols-3 gap-4 px-4 pb-6 mt-4">
-        <label for="PingTokenConvert" class="btn btn-primary text-white">{{
-          $t('index.btn_swap')
+        <label for="PingTokenConvert" class="btn btn-primary text-white">{{ $t('index.btn_swap') }}</label>
+        <label for="send" class="btn !bg-yes !border-yes text-white" @click="dialog.open('send', {}, updateState)">{{
+          $t('account.btn_send')
         }}</label>
-        <label
-          for="send"
-          class="btn !bg-yes !border-yes text-white"
-          @click="dialog.open('send', {}, updateState)"
-          >{{ $t('account.btn_send') }}</label
-        >
         <label
           for="delegate"
           class="btn !bg-info !border-info text-white"
           @click="dialog.open('delegate', {}, updateState)"
           >{{ $t('account.btn_delegate') }}</label
         >
-        <RouterLink
-          to="/wallet/receive"
-          class="btn !bg-info !border-info text-white hidden"
-          >{{ $t('index.receive') }}</RouterLink
-        >
+        <RouterLink to="/wallet/receive" class="btn !bg-info !border-info text-white hidden">{{
+          $t('index.receive')
+        }}</RouterLink>
       </div>
       <Teleport to="body">
         <ping-token-convert
@@ -532,10 +436,7 @@ const amount = computed({
         {{ $t('index.app_versions') }}
       </div>
       <!-- Application Version -->
-      <ArrayObjectElement
-        :value="paramStore.appVersion?.items"
-        :thead="false"
-      />
+      <ArrayObjectElement :value="paramStore.appVersion?.items" :thead="false" />
       <div class="h-4"></div>
     </div>
 
@@ -543,10 +444,7 @@ const amount = computed({
       <div class="px-4 pt-4 pb-2 text-lg font-semibold text-main">
         {{ $t('index.node_info') }}
       </div>
-      <ArrayObjectElement
-        :value="paramStore.nodeVersion?.items"
-        :thead="false"
-      />
+      <ArrayObjectElement :value="paramStore.nodeVersion?.items" :thead="false" />
       <div class="h-4"></div>
     </div>
   </div>

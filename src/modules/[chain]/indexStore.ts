@@ -26,6 +26,12 @@ export function colorMap(color: string) {
   }
 }
 
+const CODEMAP: Record<string, string[]> = {
+  'binance.com': ['ref', 'CPA_004JZGRX6A'],
+  'gate.com': ['ref', 'U1gVBl9a'],
+  bybit: ['affiliate_id', 'JKRRZX9'],
+};
+
 export const useIndexModule = defineStore('module-index', {
   state: () => {
     return {
@@ -112,15 +118,13 @@ export const useIndexModule = defineStore('module-index', {
 
     priceChange(): string {
       if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
-      const change =
-        this.coinInfo?.market_data?.price_change_percentage_24h || 0;
+      const change = this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       return numeral(change).format('+0.[00]');
     },
 
     priceColor(): string {
       if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
-      const change =
-        this.coinInfo?.market_data?.price_change_percentage_24h || 0;
+      const change = this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       switch (true) {
         case change > 0:
           return 'text-success';
@@ -167,9 +171,7 @@ export const useIndexModule = defineStore('module-index', {
           title: 'Validators',
           color: 'warning',
           icon: 'mdi-human-queue',
-          stats: String(
-            base?.latest?.block?.last_commit?.signatures.length || 0
-          ),
+          stats: String(base?.latest?.block?.last_commit?.signatures.length || 0),
           change: 0,
         },
         {
@@ -210,9 +212,7 @@ export const useIndexModule = defineStore('module-index', {
           icon: 'mdi-bank',
           stats: formatter.formatTokens(
             // @ts-ignore
-            this.communityPool?.filter(
-              (x: Coin) => x.denom === staking.params.bond_denom
-            )
+            this.communityPool?.filter((x: Coin) => x.denom === staking.params.bond_denom)
           ),
           change: 0,
         },
@@ -256,12 +256,11 @@ export const useIndexModule = defineStore('module-index', {
       if (firstAsset && firstAsset.coingecko_id) {
         this.coingecko.getCoinInfo(firstAsset.coingecko_id).then((x) => {
           this.coinInfo = x;
+          // this.coinInfo.tickers.sort((a, b) => a.converted_last.usd - b.converted_last.usd)
         });
-        this.coingecko
-          .getMarketChart(this.days, firstAsset.coingecko_id)
-          .then((x) => {
-            this.marketData = x;
-          });
+        this.coingecko.getMarketChart(this.days, firstAsset.coingecko_id).then((x) => {
+          this.marketData = x;
+        });
       }
     },
     selectTicker(i: number) {
@@ -269,3 +268,31 @@ export const useIndexModule = defineStore('module-index', {
     },
   },
 });
+
+/**
+ * Adds or replaces a query parameter in the provided URL.
+ * @param url - The base URL.
+ * @param param - The name of the parameter to add or replace.
+ * @param value - The value to set for the parameter.
+ * @returns The new URL with the parameter added or replaced.
+ */
+export function addOrReplaceUrlParam(url: string, param: string, value: string): string {
+  // Parse the URL
+  const urlObj = new URL(url, window.location.origin);
+
+  // Set (add or replace) the query parameter
+  urlObj.searchParams.set(param, value);
+
+  // Return the string representation of the new URL
+  return urlObj.toString();
+}
+
+export function tickerUrl(url: string) {
+  for (const domain of Object.keys(CODEMAP)) {
+    if (url.indexOf(domain) > -1) {
+      const v = CODEMAP[domain];
+      return addOrReplaceUrlParam(url, v[0], v[1]);
+    }
+  }
+  return url;
+}

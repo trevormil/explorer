@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 // Components
 import newFooter from '@/layouts/components/NavFooter.vue';
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue';
 import NavbarSearch from '@/layouts/components/NavbarSearch.vue';
 import ChainProfile from '@/layouts/components/ChainProfile.vue';
+import Sponsors from '@/layouts/components/Sponsors.vue';
 
-import { useDashboard } from '@/stores/useDashboard';
-import { useBlockchain } from '@/stores';
+import { NetworkType, useDashboard } from '@/stores/useDashboard';
+import { useBaseStore, useBlockchain } from '@/stores';
 
 import NavBarI18n from './NavBarI18n.vue';
 import NavBarWallet from './NavBarWallet.vue';
@@ -19,11 +20,14 @@ import type {
   NavSectionTitle,
   VerticalNavItems,
 } from '../types';
+import dayjs from 'dayjs';
+import AdBanner from '@/components/ad/AdBanner.vue';
 
 const dashboard = useDashboard();
 dashboard.initial();
 const blockchain = useBlockchain();
 blockchain.randomSetupEndpoint();
+const baseStore = useBaseStore();
 
 const current = ref(''); // the current chain
 const temp = ref('');
@@ -59,11 +63,23 @@ function isNavTitle(nav: VerticalNavItems | any): nav is NavSectionTitle {
 }
 function selected(route: any, nav: NavLink) {
   const b =
-    route.path === nav.to?.path ||
-    (route.path.startsWith(nav.to?.path) &&
-      nav.title.indexOf('dashboard') === -1);
+    route.path === nav.to?.path || (route.path.startsWith(nav.to?.path) && nav.title.indexOf('dashboard') === -1);
   return b;
 }
+const blocktime = computed(() => {
+  return dayjs(baseStore.latest?.block?.header?.time);
+});
+
+const behind = computed(() => {
+  const current = dayjs().subtract(10, 'minute');
+  return blocktime.value.isBefore(current);
+});
+
+dayjs();
+
+const show_ad = computed(() => {
+  return location.hostname.indexOf('ping.pub') > -1;
+});
 </script>
 
 <template>
@@ -87,26 +103,18 @@ function selected(route: any, nav: NavLink) {
           <Icon icon="mdi-close" class="text-2xl" />
         </div>
       </div>
-      <div
-        v-for="(item, index) of blockchain.computedChainMenu"
-        :key="index"
-        class="px-2"
-      >
+      <div v-for="(item, index) of blockchain.computedChainMenu" :key="index" class="px-2">
         <div
           v-if="isNavGroup(item)"
           :tabindex="index"
           class="collapse"
           :class="{
-            'collapse-arrow': item?.children?.length > 0,
+            'collapse-arrow': index > 0 && item?.children?.length > 0,
             'collapse-open': index === 0 && sidebarOpen,
             'collapse-close': index === 0 && !sidebarOpen,
           }"
         >
-          <input
-            type="checkbox"
-            class="cursor-pointer !h-10 block"
-            @click="changeOpen(index)"
-          />
+          <input v-if="index > 0" type="checkbox" class="cursor-pointer !h-10 block" @click="changeOpen(index)" />
           <div
             class="collapse-title !py-0 px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
           >
@@ -119,14 +127,8 @@ function selected(route: any, nav: NavLink) {
                 'text-blue-500': item?.title !== 'Favorite',
               }"
             />
-            <img
-              v-if="item?.icon?.image"
-              :src="item?.icon?.image"
-              class="w-6 h-6 rounded-full mr-3"
-            />
-            <div
-              class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
-            >
+            <img v-if="item?.icon?.image" :src="item?.icon?.image" class="w-6 h-6 rounded-full mr-3" />
+            <div class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap">
               {{ item?.title }}
             </div>
             <div
@@ -156,9 +158,7 @@ function selected(route: any, nav: NavLink) {
                   icon="mdi:chevron-right"
                   class="mr-2 ml-3"
                   :class="{
-                    'text-white':
-                      $route.path === el?.to?.path &&
-                      item?.title !== 'Favorite',
+                    'text-white': $route.path === el?.to?.path && item?.title !== 'Favorite',
                   }"
                 />
                 <img
@@ -177,6 +177,19 @@ function selected(route: any, nav: NavLink) {
                 >
                   {{ item?.title === 'Favorite' ? el?.title : $t(el?.title) }}
                 </div>
+              </RouterLink>
+            </div>
+            <div
+              v-if="index === 0 && dashboard.networkType === NetworkType.Testnet"
+              class="menu bg-base-100 w-full !p-0"
+            >
+              <RouterLink
+                class="hover:bg-gray-100 dark:hover:bg-[#373f59] rounded cursor-pointer px-3 py-2 flex items-center"
+                :to="`/${blockchain.chainName}/faucet`"
+              >
+                <Icon icon="mdi:chevron-right" class="mr-2 ml-3"></Icon>
+                <div class="text-base capitalize text-gray-500 dark:text-gray-300">Faucet</div>
+                <div class="badge badge-sm text-white border-none badge-error ml-auto">New</div>
               </RouterLink>
             </div>
           </div>
@@ -202,9 +215,7 @@ function selected(route: any, nav: NavLink) {
             :src="item?.icon?.image"
             class="w-6 h-6 rounded-full mr-3 border border-blue-100"
           />
-          <div
-            class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
-          >
+          <div class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap">
             {{ item?.title }}
           </div>
           <div
@@ -221,6 +232,49 @@ function selected(route: any, nav: NavLink) {
         >
           {{ item?.heading }}
         </div>
+      </div>
+      <div class="px-2">
+        <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">Tools</div>
+        <RouterLink
+          to="/wallet/suggest"
+          class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
+        >
+          <Icon icon="mdi:frequently-asked-questions" class="text-xl mr-2" />
+          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Wallet Helper</div>
+        </RouterLink>
+        <div
+          v-if="showDiscord"
+          class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase"
+        >
+          {{ $t('module.sponsors') }}
+        </div>
+        <Sponsors v-if="showDiscord" />
+        <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">{{ $t('module.links') }}</div>
+        <a
+          href="https://twitter.com/ping_pub"
+          target="_blank"
+          class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
+        >
+          <Icon icon="mdi:twitter" class="text-xl mr-2" />
+          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Twitter</div>
+        </a>
+        <a
+          v-if="showDiscord"
+          href="https://discord.com/invite/CmjYVSr6GW"
+          target="_blank"
+          class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
+        >
+          <Icon icon="mdi:discord" class="text-xl mr-2" />
+          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Discord</div>
+        </a>
+        <a
+          href="https://github.com/ping-pub/explorer/discussions"
+          target="_blank"
+          class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
+        >
+          <Icon icon="mdi:frequently-asked-questions" class="text-xl mr-2" />
+          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">FAQ</div>
+        </a>
       </div>
     </div>
     <div class="xl:!ml-64 px-3 pt-4">
@@ -248,9 +302,34 @@ function selected(route: any, nav: NavLink) {
 
       <!-- 👉 Pages -->
       <div style="min-height: calc(100vh - 180px)">
+        <div v-if="behind" class="alert alert-error mb-4">
+          <div class="flex gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="stroke-current flex-shrink-0 w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <span
+              >{{ $t('pages.out_of_sync') }} {{ blocktime.format() }} ({{
+                blocktime.fromNow()
+              }})</span
+            >
+          </div>
+        </div>
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in">
-            <Component :is="Component" />
+            <div>
+              <AdBanner v-if="show_ad" />
+              <Component :is="Component" />
+            </div>
           </Transition>
         </RouterView>
       </div>

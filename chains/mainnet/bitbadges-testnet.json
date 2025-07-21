@@ -13,17 +13,17 @@
       "address": "https://testnet.node.bitbadges.io/rpc"
     }
   ],
-  "sdk_version": "0.50.10",
+  "sdk_version": "0.50.13",
   "coin_type": "118",
   "min_tx_fee": "0",
   "addr_prefix": "bb",
-  "logo": "/bitbadgeslogo.png",
+  "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/bitbadgeslogo.png?raw=true",
   "assets": [
     {
       "base": "ubadge",
       "symbol": "BADGE",
       "exponent": "9",
-      "logo": "/bitbadgeslogo.png"
+      "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/badge_logo.png?raw=true"
     }
   ]
 }

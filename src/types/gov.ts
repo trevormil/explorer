@@ -31,6 +31,7 @@ export interface GovProposal {
     description?: string;
     current?: any[];
     changes?: any[];
+    params?: any[];
     plan?: {
       height?: string | number;
       time?: string | number;
@@ -49,8 +50,8 @@ export interface GovProposal {
   voting_start_time: string;
   voting_end_time: string;
   is_expedited: boolean;
-  voterStatus?: string
-//   VoteOption[];
+  voterStatus?: string;
+  //   VoteOption[];
 }
 
 export interface VoteOption {
