@@ -50,6 +50,34 @@ Your donation will help us make better products. Thanks in advance.
 You can hire us by submitting an issue and fund the issue on [IssueHunter](https://issuehunt.io/r/ping-pub/explorer)
 
 
+## Automated Registry Updates
+
+This repository includes an automated system for updating the BitBadges registry assets:
+
+### How it works:
+1. **GitHub Actions Workflow**: The `.github/workflows/update-registry.yaml` workflow runs on every push to main
+2. **Registry Generation**: The `scripts/generate-registry.ts` script fetches latest asset data from the BitBadges API
+3. **Automatic PR Creation**: When changes are detected, a pull request is automatically created with the updated `chains/mainnet/bitbadges.json`
+
+### Manual Execution:
+```bash
+# Run the registry generation script locally
+yarn generate-registry
+
+# Or with npm
+npm run generate-registry
+```
+
+### Required Environment Variables:
+- `BITBADGES_API_KEY`: Your BitBadges API key (set as GitHub secret for CI)
+
+### CI/CD Process:
+1. Push to main branch triggers the workflow
+2. Script generates updated asset registry
+3. If changes are detected, a PR is created automatically
+4. PR includes all new/updated assets with proper metadata
+5. Manual review and merge of the PR
+
 ## Contributors
 
 Developers: @liangping @dingyiming
