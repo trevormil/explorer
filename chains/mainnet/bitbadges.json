@@ -20,6 +20,12 @@
   "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/bitbadgeslogo.png?raw=true",
   "assets": [
     {
+      "base": "badges:40:test",
+      "symbol": "TESTZERO",
+      "exponent": "0",
+      "type_asset": "sdk.coin"
+    },
+    {
       "base": "ubadge",
       "symbol": "BADGE",
       "exponent": "9",
