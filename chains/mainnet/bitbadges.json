@@ -23,6 +23,7 @@
       "base": "badges:40:test",
       "symbol": "TESTZERO",
       "exponent": "0",
+      "logo": "",
       "type_asset": "sdk.coin"
     },
     {
