@@ -17,7 +17,7 @@
   "coin_type": "118",
   "min_tx_fee": "0",
   "addr_prefix": "bb",
-  "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/bitbadgeslogo.png?raw=true",
+  "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/badge_logo.png?raw=true",
   "assets": [
     {
       "base": "badges:40:test",
