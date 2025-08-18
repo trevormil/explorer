@@ -23,6 +23,14 @@
       "base": "badges:40:test",
       "symbol": "TESTZERO",
       "exponent": "0",
+      "logo": "",
+      "type_asset": "sdk.coin"
+    },
+    {
+      "base": "badges:49:chaosnet",
+      "symbol": "uCHAOS",
+      "exponent": "0",
+      "logo": "https://bitbadges-cdn.nyc3.digitaloceanspaces.com/cdn/6bfc45bdc771f4053e7081354b89d637.webp",
       "type_asset": "sdk.coin"
     },
     {
@@ -30,13 +38,6 @@
       "symbol": "BADGE",
       "exponent": "9",
       "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/badge_logo.png?raw=true"
-    },
-    {
-      "base": "badges:49:chaosnet",
-      "symbol": "CHAOS",
-      "exponent": "9",
-      "type_asset": "sdk.coin",
-      "logo": "https://bitbadges.io/_next/image?url=%2Fimages%2Fchaos.png&w=128&q=75"
     }
   ]
 }
