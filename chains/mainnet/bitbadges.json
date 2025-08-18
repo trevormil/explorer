@@ -30,6 +30,13 @@
       "symbol": "BADGE",
       "exponent": "9",
       "logo": "https://github.com/cosmos/chain-registry/blob/master/bitbadges/images/badge_logo.png?raw=true"
+    },
+    {
+      "base": "badges:49:chaosnet",
+      "symbol": "CHAOS",
+      "exponent": "9",
+      "type_asset": "sdk.coin",
+      "logo": "https://bitbadges.io/_next/image?url=%2Fimages%2Fchaos.png&w=128&q=75"
     }
   ]
 }
