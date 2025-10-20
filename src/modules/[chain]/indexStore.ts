@@ -6,11 +6,12 @@ import {
   useFormatter,
   useGovStore,
   useBadgeBankStore,
+  useDistributionStore,
+  useMintStore,
+  useStakingStore,
 } from '@/stores';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useDistributionStore } from '@/stores/useDistributionStore';
-import { useMintStore } from '@/stores/useMintStore';
-import { useStakingStore } from '@/stores/useStakingStore';
+
 import type { Coin, Tally } from '@/types';
 import numeral from 'numeral';
 import { defineStore } from 'pinia';
@@ -118,13 +119,15 @@ export const useIndexModule = defineStore('module-index', {
 
     priceChange(): string {
       if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
-      const change = this.coinInfo?.market_data?.price_change_percentage_24h || 0;
+      const change =
+        this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       return numeral(change).format('+0.[00]');
     },
 
     priceColor(): string {
       if (!this.coinInfo?.market_data?.price_change_percentage_24h) return '';
-      const change = this.coinInfo?.market_data?.price_change_percentage_24h || 0;
+      const change =
+        this.coinInfo?.market_data?.price_change_percentage_24h || 0;
       switch (true) {
         case change > 0:
           return 'text-success';
@@ -171,7 +174,9 @@ export const useIndexModule = defineStore('module-index', {
           title: 'Validators',
           color: 'warning',
           icon: 'mdi-human-queue',
-          stats: String(base?.latest?.block?.last_commit?.signatures.length || 0),
+          stats: String(
+            base?.latest?.block?.last_commit?.signatures.length || 0
+          ),
           change: 0,
         },
         {
@@ -212,7 +217,9 @@ export const useIndexModule = defineStore('module-index', {
           icon: 'mdi-bank',
           stats: formatter.formatTokens(
             // @ts-ignore
-            this.communityPool?.filter((x: Coin) => x.denom === staking.params.bond_denom)
+            this.communityPool?.filter(
+              (x: Coin) => x.denom === staking.params.bond_denom
+            )
           ),
           change: 0,
         },
@@ -258,9 +265,11 @@ export const useIndexModule = defineStore('module-index', {
           this.coinInfo = x;
           // this.coinInfo.tickers.sort((a, b) => a.converted_last.usd - b.converted_last.usd)
         });
-        this.coingecko.getMarketChart(this.days, firstAsset.coingecko_id).then((x) => {
-          this.marketData = x;
-        });
+        this.coingecko
+          .getMarketChart(this.days, firstAsset.coingecko_id)
+          .then((x) => {
+            this.marketData = x;
+          });
       }
     },
     selectTicker(i: number) {
@@ -276,7 +285,11 @@ export const useIndexModule = defineStore('module-index', {
  * @param value - The value to set for the parameter.
  * @returns The new URL with the parameter added or replaced.
  */
-export function addOrReplaceUrlParam(url: string, param: string, value: string): string {
+export function addOrReplaceUrlParam(
+  url: string,
+  param: string,
+  value: string
+): string {
   // Parse the URL
   const urlObj = new URL(url, window.location.origin);
 
