@@ -35,7 +35,7 @@ async function load() {
     displayDenom.value = baseDenom.value;
     symbol.value = baseDenom.value;
   }
-  const cacheKey = `holders_${baseDenom.value}`;
+  const cacheKey = `holders_${chainStore.chainId}_${baseDenom.value}`;
   const cacheTsKey = `${cacheKey}_ts`;
   const now = Date.now();
   const cachedTs = Number(localStorage.getItem(cacheTsKey) || 0);
