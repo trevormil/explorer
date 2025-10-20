@@ -126,9 +126,11 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
     return supply;
   }
   async getBankDenomOwners(denom: string, limit = 100, key?: string) {
-    let query = `?pagination.limit=${limit}`;
+    if (!denom) throw new Error('Denom is required');
+
+    let query = `?denom=${denom}&pagination.limit=${limit}`;
     if (key) query += `&pagination.key=${encodeURIComponent(key)}`;
-    return this.request(this.registry.bank_denom_owners, { denom }, query);
+    return this.request(this.registry.bank_denom_owners, {}, query);
   }
   // Distribution Module
   async getDistributionParams() {

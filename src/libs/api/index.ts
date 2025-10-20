@@ -24,7 +24,7 @@ export const DEFAULT: RequestRegistry = {
   bank_supply_by_denom: { url: '/cosmos/bank/v1beta1/supply/{denom}', adapter },
   // Standard denom owners endpoint with path param
   bank_denom_owners: {
-    url: '/cosmos/bank/v1beta1/denom_owners/{denom}',
+    url: '/cosmos/bank/v1beta1/denom_owners_by_query',
     adapter,
   },
   distribution_params: { url: '/cosmos/distribution/v1beta1/params', adapter },
