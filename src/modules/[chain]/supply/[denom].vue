@@ -87,9 +87,9 @@ async function load() {
   const top = all.slice(0, 100).map((x) => ({
     address: x.address,
     rawAmount: x.rawAmount,
-    amountDisplay: format
-      .tokenAmountNumber({ amount: x.rawAmount, denom: displayDenom.value })
-      .toString(),
+    amountDisplay: BigInt(x.rawAmount || '0')
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ','),
   }));
   holders.value = top;
   localStorage.setItem(cacheKey, JSON.stringify(top));
@@ -111,6 +111,9 @@ watch(() => route.fullPath, load);
       >
         Back to Supply
       </button>
+    </div>
+    <div class="px-4 pb-2 text-xs opacity-70">
+      Note: balances shown in base denom units (0 decimals).
     </div>
     <div v-if="isLoading" class="px-4 pb-2 text-sm opacity-80">
       Loading owners… Pages: {{ progress.pages }} Owners: {{ progress.owners }}
