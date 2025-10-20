@@ -92,6 +92,8 @@ async function load() {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ','),
   }));
   holders.value = top;
+
+  console.log(cacheKey, cacheTsKey, now);
   localStorage.setItem(cacheKey, JSON.stringify(top));
   localStorage.setItem(cacheTsKey, String(now));
   isLoading.value = false;
