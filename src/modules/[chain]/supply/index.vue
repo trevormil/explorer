@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router';
 import { useBlockchain, useFormatter } from '@/stores';
 import {
   PageRequest,
@@ -11,6 +12,7 @@ import { onMounted } from 'vue';
 import type { Asset } from '@/types/chaindata';
 import PaginationBar from '@/components/PaginationBar.vue';
 const props = defineProps(['chain']);
+const router = useRouter();
 
 const format = useFormatter();
 const chainStore = useBlockchain();
@@ -94,6 +96,8 @@ function pageload(p: number) {
     pageResponse.value = bankSupplyResponse.pagination;
   });
 }
+
+// holders are shown in dedicated route `supply/[denom]`
 </script>
 <template>
   <div class="overflow-auto bg-base-100">
@@ -107,7 +111,15 @@ function pageload(p: number) {
           <td>Base</td>
         </tr>
       </thead>
-      <tr v-for="item in list" class="hover">
+      <tr
+        v-for="item in list"
+        class="hover cursor-pointer"
+        @click="
+          $router.push({
+            path: `/${props.chain}/supply/${encodeURIComponent(item.base)}`,
+          })
+        "
+      >
         <td>
           <img v-if="item.logo" :src="item.logo" class="w-7 h-7" />
         </td>

@@ -31,3 +31,12 @@ export interface PaginatedDenomMetadata extends PaginatedResponse {
 export interface PaginatedSupply extends PaginatedResponse {
   supply: Coin[];
 }
+
+export interface DenomOwner {
+  address: string;
+  balance: Coin;
+}
+
+export interface PaginatedDenomOwners extends PaginatedResponse {
+  owners: DenomOwner[];
+}
